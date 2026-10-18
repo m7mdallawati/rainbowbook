@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rainbow Books Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#f5f6f8; --card:#ffffff; --ink:#1c1f24; --muted:#5f6670; --line:#e1e4e8;
+  --green:#1f4e8c; --green-soft:#e8eef7; --brass:#5f6670; --brass-soft:#f1f2f4;
+  --bad:#c62828; --bad-soft:#fdecea; --good:#2e7d32;
+  --display:"Libre Caslon Text",Georgia,"Times New Roman",serif;
+  --body:"Figtree","Segoe UI",Arial,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#121417; --card:#1b1e23; --ink:#e8eaed; --muted:#a5acb5; --line:#2c3138;
+  --green:#7aa7e0; --green-soft:#1d2a3b; --brass:#a5acb5; --brass-soft:#23272d;
+  --bad:#f28b82; --bad-soft:#3a1f1c; --good:#81c995; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121417; --card:#1b1e23; --ink:#e8eaed; --muted:#a5acb5; --line:#2c3138;
+  --green:#7aa7e0; --green-soft:#1d2a3b; --brass:#a5acb5; --brass-soft:#23272d;
+  --bad:#f28b82; --bad-soft:#3a1f1c; --good:#81c995; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+a{color:var(--green)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.site{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.hrow{display:flex;align-items:center;gap:20px;padding-block:14px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-size:26px;font-weight:700;color:var(--ink);text-decoration:none;letter-spacing:-.3px;white-space:nowrap}
+.brand small{display:block;font-family:var(--body);font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}
+.search{flex:1;min-width:200px;display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper)}
+.search input{flex:1;border:0;background:transparent;padding:10px 12px;min-width:0}
+.search button{border:0;background:var(--green);color:var(--card);padding:0 16px;font-weight:600;cursor:pointer}
+.hlinks{display:flex;gap:16px;align-items:center}
+.hlinks a{text-decoration:none;color:var(--ink);font-weight:500;font-size:15px}
+.cartlink{background:var(--green-soft);padding:7px 12px;border-radius:6px}
+nav.cats{border-top:1px solid var(--line)}
+nav.cats .wrap{display:flex;gap:22px;overflow-x:auto;padding-block:10px}
+nav.cats a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:14px;font-weight:600}
+nav.cats a.on{color:var(--green);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}
+main{padding-block:32px 56px;min-height:60vh}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;font-weight:700;letter-spacing:-.2px}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.15}
+h2{font-size:24px}
+h3{font-size:18px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--brass)}
+.lead{color:var(--muted);font-size:17px;max-width:62ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:6px;padding:11px 20px;font-weight:600;border:1px solid var(--green);background:var(--green);color:var(--card);cursor:pointer;text-decoration:none;font-size:15px}
+.btn.alt{background:transparent;color:var(--green)}
+.btn.small{padding:7px 12px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-size:13px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:22px}
+.sec{display:flex;flex-direction:column;gap:18px;margin-top:44px}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:36px;align-items:center}
+.hero .stack{min-width:0}
+.heroshelf{display:flex;gap:12px;align-items:flex-end;justify-content:center;padding:26px 18px 0;border-bottom:10px solid var(--green);background:var(--green-soft);border-radius:8px 8px 0 0}
+.heroshelf .cover{width:110px}
+.heroshelf .cover:nth-child(2){width:128px}
+.cover{aspect-ratio:2/3;max-width:100%;border-radius:2px 5px 5px 2px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:inset 6px 0 0 rgba(0,0,0,.18),0 2px 6px rgba(0,0,0,.12);overflow:hidden}
+.cover .imp{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;opacity:.85;font-weight:600}
+.cover .t{font-family:var(--display);font-weight:700;font-size:15px;line-height:1.2}
+.cover .a{font-size:11px;opacity:.9}
+.cover.big .t{font-size:26px}.cover.big .a{font-size:15px}.cover.big .imp{font-size:11px}.cover.big{padding:26px 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:26px 20px}
+.bk{display:flex;flex-direction:column;gap:8px;min-width:0}
+.bk a.cv{text-decoration:none}
+.bk .ti{font-weight:600;line-height:1.3;color:var(--ink);text-decoration:none}
+.bk .au{color:var(--muted);font-size:14px}
+.bk .pr{font-weight:700;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--green-soft);color:var(--green)}
+.tag.brass{background:var(--brass-soft);color:var(--brass)}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.three > *{min-width:0}
+.event{display:grid;grid-template-columns:76px 1fr;gap:16px;align-items:start}
+.date{background:var(--green);color:var(--card);border-radius:6px;text-align:center;padding:8px 4px;font-variant-numeric:tabular-nums}
+.date b{display:block;font-size:26px;line-height:1.1;font-family:var(--display)}
+.date span{font-size:12px;letter-spacing:1px;text-transform:uppercase}
+.shop{display:grid;grid-template-columns:220px 1fr;gap:32px}
+.shop > *{min-width:0}
+.filters{display:flex;flex-direction:column;gap:6px}
+.filters button{text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--ink)}
+.filters button.on{background:var(--green-soft);color:var(--green);font-weight:700}
+select,input[type=text],input[type=email],input[type=tel],input[type=password],input[type=number],textarea{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--card);width:100%}
+label{font-weight:600;font-size:14px;display:block;margin-bottom:5px}
+.field{min-width:0}
+.req{color:var(--bad)}
+.hint{font-size:13px;color:var(--muted);margin-top:4px}
+.err{font-size:13px;color:var(--bad);margin-top:4px;font-weight:600}
+.bad{border-color:var(--bad)!important;background:var(--bad-soft)!important}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fgrid .full{grid-column:1/-1}
+.bookpage{display:grid;grid-template-columns:300px 1fr;gap:44px;align-items:start}
+.bookpage > *{min-width:0}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px}
+.facts dt{color:var(--muted)}.facts dd{margin:0}
+.note{background:var(--brass-soft);border-radius:6px;padding:16px 18px;font-family:var(--display);font-style:italic}
+.note b{display:block;font-family:var(--body);font-style:normal;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--brass);margin-bottom:4px}
+.opt{display:flex;gap:10px;flex-wrap:wrap}
+.opt label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin:0;cursor:pointer;font-weight:500;background:var(--card)}
+.opt label.on{border-color:var(--green);background:var(--green-soft)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.r{text-align:right}
+.tablewrap{overflow-x:auto}
+.qty{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.qty button{border:0;background:var(--paper);width:32px;cursor:pointer}
+.qty span{min-width:32px;text-align:center;padding:5px 0}
+.linkbtn{border:0;background:none;color:var(--green);cursor:pointer;padding:0;text-decoration:underline}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.steps div{flex:1;min-width:120px;border-top:4px solid var(--line);padding-top:8px;font-size:14px;color:var(--muted);font-weight:600}
+.steps div.on{border-color:var(--green);color:var(--ink)}
+.steps div.done{border-color:var(--good);color:var(--good)}
+.co{display:grid;grid-template-columns:1fr 340px;gap:30px;align-items:start}
+.co > *{min-width:0}
+.sum{display:flex;flex-direction:column;gap:10px}
+.sum .line{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums}
+.sum .tot{border-top:1px solid var(--line);padding-top:10px;font-weight:700;font-size:18px}
+.secure{font-size:13px;background:var(--green-soft);border-radius:6px;padding:10px 12px;color:var(--ink)}
+.ok{background:var(--green-soft);border:1px solid var(--good);border-radius:8px;padding:18px 20px}
+.storelist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.faq{display:flex;flex-direction:column;gap:10px}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 18px}
+.faq summary{cursor:pointer;font-weight:600}
+.faq details p,.faq details ol,.faq details ul{margin:10px 0 0;color:var(--ink)}
+.faq details li{margin-bottom:4px}
+.helpgrid{display:grid;grid-template-columns:1fr 300px;gap:30px;align-items:start}
+.helpgrid > *{min-width:0}
+@media (max-width:900px){.helpgrid{grid-template-columns:1fr}}
+footer{border-top:1px solid var(--line);background:var(--card)}
+footer .wrap{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:24px;padding-block:32px;font-size:14px}
+footer .wrap > *{min-width:0}
+footer h4{margin:0 0 8px;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+footer a{display:block;color:var(--muted);text-decoration:none;margin-bottom:4px}
+@media (max-width:900px){
+  .hero,.bookpage,.co,.shop{grid-template-columns:1fr}
+  .three{grid-template-columns:1fr}
+  .filters{flex-direction:row;flex-wrap:wrap}
+  footer .wrap{grid-template-columns:1fr 1fr}
+  .bookpage .cover.big{max-width:240px}
+}
+@media (max-width:520px){
+  header.site{position:static}
+  .fgrid{grid-template-columns:1fr}
+  .hlinks{width:100%;justify-content:space-between}
+  .heroshelf .cover{width:80px}.heroshelf .cover:nth-child(2){width:92px}
+}
+@media (prefers-reduced-motion:no-preference){.btn,.filters button{transition:background .15s,color .15s}}
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap hrow">
+    <a class="brand" href="#home">Rainbow Books<small>Booksellers since 1946</small></a>
+    <form class="search" id="searchForm" role="search">
+      <input id="q" type="text" placeholder="Search by title, author or ISBN" aria-label="Search books">
+      <button type="submit">Search</button>
+    </form>
+    <div class="hlinks">
+      <a href="#stores">Stores</a>
+      <a href="#help">Help</a>
+      <a href="#account" id="acctLink">Sign in</a>
+      <a href="#cart" class="cartlink" id="cartLink">Cart (0)</a>
+    </div>
+  </div>
+  <nav class="cats" aria-label="Main">
+    <div class="wrap" id="nav">
+      <a href="#home" data-r="home">Home</a>
+      <a href="#shop" data-r="shop">All books</a>
+      <a href="#shop-fiction" data-r="shop-fiction">Fiction</a>
+      <a href="#shop-mystery" data-r="shop-mystery">Crime and mystery</a>
+      <a href="#shop-ya" data-r="shop-ya">Young adult</a>
+      <a href="#shop-children" data-r="shop-children">Children</a>
+      <a href="#shop-nonfiction" data-r="shop-nonfiction">Non-fiction</a>
+      <a href="#shop-rainbow" data-r="shop-rainbow">Rainbow Books Publishing</a>
+      <a href="#events" data-r="events">Events and book clubs</a>
+      <a href="#publish" data-r="publish">For authors</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap" id="view"></main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brand" style="font-size:20px">Rainbow Books</div>
+      <p class="muted">Victorian booksellers and publishers since 1946. 44 stores across Melbourne and regional Victoria.</p>
+      <p class="muted">Customer service: 1300 975 708 (Mon to Fri, 9am to 5pm)</p>
+    </div>
+    <div><h4>Shop</h4><a href="#shop">All books</a><a href="#shop-rainbow">Our own titles</a><a href="#events">Events</a></div>
+    <div><h4>Help</h4><a href="#help">Help and FAQs</a><a href="#help">Delivery and returns</a><a href="#stores">Find a store</a><a href="#account">My account</a></div>
+    <div><h4>Authors</h4><a href="#publish">Publish with us</a><a href="#events">Book a signing</a></div>
+  </div>
+</footer>
+
+<script>
+const STORES=[
+ {id:"collins",name:"Collins Street",area:"Melbourne CBD",addr:"Collins Street, Melbourne VIC 3000",phone:"(03) 5550 1946",hours:"Mon to Sat 9am to 7pm, Sun 10am to 5pm",flag:"Flagship store"},
+ {id:"eastpoint",name:"Eastpoint",area:"Bayswater",addr:"Eastpoint Shopping Centre, Bayswater VIC 3153",phone:"(03) 5550 4410",hours:"Mon to Sat 9am to 5:30pm, Sun 10am to 4pm",flag:"Franchise store"},
+ {id:"geelong",name:"Geelong",area:"Geelong",addr:"Moorabool Street, Geelong VIC 3220",phone:"(03) 5550 3380",hours:"Mon to Sat 9am to 5:30pm",flag:""},
+ {id:"ballarat",name:"Ballarat",area:"Ballarat",addr:"Sturt Street, Ballarat VIC 3350",phone:"(03) 5550 2290",hours:"Mon to Sat 9am to 5:30pm",flag:""},
+ {id:"bendigo",name:"Bendigo",area:"Bendigo",addr:"Hargreaves Street, Bendigo VIC 3550",phone:"(03) 5550 7712",hours:"Mon to Sat 9am to 5:30pm",flag:"Franchise store"},
+ {id:"doncaster",name:"Doncaster",area:"Doncaster",addr:"Doncaster Road, Doncaster VIC 3108",phone:"(03) 5550 6021",hours:"Mon to Sun 9am to 6pm",flag:""}
+];
+const BOOKS=[
+ {id:"silent-harbour",t:"The Silent Harbour",a:"Veronica Watson",cat:"fiction",rb:1,p:32.99,isbn:"978-0-6489-1201-4",pg:384,y:2026,c:"#24465e",k:"#f3efe4",eb:1,s:{collins:6,eastpoint:2,geelong:3,ballarat:0,bendigo:1,doncaster:4},
+  d:"A lighthouse keeper's widow returns to Port Fairy and finds the town still guarding the secret of the winter her husband drowned. Watson's best-loved novel yet.",pick:["Mei, Collins Street","Read it in two sittings. The last fifty pages are worth the whole year."]},
+ {id:"history-yarra",t:"A History of the Yarra",a:"Jonathan Croft",cat:"nonfiction",rb:1,p:39.99,isbn:"978-0-6489-1188-8",pg:312,y:2025,c:"#5b3a26",k:"#f0e2c8",eb:1,s:{collins:3,eastpoint:1,geelong:0,ballarat:2,bendigo:0,doncaster:2},
+  d:"From the Wurundjeri people to the river's working docks and its recovery today, Dr Croft tells the story of the river that made Melbourne.",pick:["Arthur, Stores team","Full of maps and photographs. A great gift for anyone who loves this city."]},
+ {id:"orchard-wandin",t:"The Orchard at Wandin",a:"Veronica Watson",cat:"fiction",rb:1,p:29.99,isbn:"978-0-6489-1150-5",pg:296,y:2024,c:"#3d5a2f",k:"#eef3e2",eb:1,s:{collins:4,eastpoint:3,geelong:2,ballarat:1,bendigo:2,doncaster:3},
+  d:"Three sisters, one failing cherry orchard and a summer that changes all of them.",pick:["Priya, Geelong","Warm and funny. Perfect for book clubs."]},
+ {id:"mallee-stories",t:"Stories from the Mallee",a:"Edited by Ruth Ferris",cat:"nonfiction",rb:1,p:26.99,isbn:"978-0-6489-1172-7",pg:240,y:2025,c:"#8a4b1f",k:"#f8e8d2",eb:1,s:{collins:2,eastpoint:0,geelong:1,ballarat:3,bendigo:4,doncaster:1},
+  d:"Twenty-two writers from north-west Victoria on drought, family and the long red horizon.",pick:null},
+ {id:"night-market",t:"Night Market",a:"Lena Ostrowski",cat:"mystery",rb:0,p:24.99,isbn:"978-1-7634-0217-9",pg:352,y:2026,c:"#1f2433",k:"#e9c46a",eb:0,s:{collins:8,eastpoint:5,geelong:4,ballarat:2,bendigo:3,doncaster:6},
+  d:"A stallholder at the Queen Victoria Night Market vanishes and Detective Sam Hollis has one weekend to find her.",pick:["Josh, Doncaster","Fast, sharp and very Melbourne."]},
+ {id:"quiet-detective",t:"The Quiet Detective",a:"Hamish Byrne",cat:"mystery",rb:0,p:19.99,isbn:"978-1-7634-0098-4",pg:288,y:2025,c:"#40384f",k:"#e6e1f0",eb:0,s:{collins:5,eastpoint:2,geelong:2,ballarat:1,bendigo:0,doncaster:2},
+  d:"A retired librarian solves crimes in a small Gippsland town, one overdue book at a time.",pick:null},
+ {id:"salt-ember",t:"Salt and Ember",a:"Priya Raman",cat:"ya",rb:0,p:22.99,isbn:"978-1-7634-0311-4",pg:416,y:2026,c:"#7a1f2b",k:"#fbe3c4",eb:0,s:{collins:9,eastpoint:4,geelong:5,ballarat:3,bendigo:2,doncaster:7},
+  d:"A fire-mage and a sea-witch are forced into a truce that neither of them wants. Book one of the Tidebreak duology.",pick:["Ellie, Collins Street","Our most requested young adult book this term."]},
+ {id:"starfall",t:"Starfall Academy",a:"J. Merritt",cat:"ya",rb:0,p:21.99,isbn:"978-1-7634-0140-0",pg:368,y:2025,c:"#18355e",k:"#d6e6ff",eb:0,s:{collins:4,eastpoint:3,geelong:1,ballarat:2,bendigo:2,doncaster:3},
+  d:"Seventeen-year-old Nova wins a place at the academy that trains pilots for the outer colonies.",pick:null},
+ {id:"cartographer",t:"The Cartographer's Apprentice",a:"Tom Whitlam",cat:"children",rb:0,p:16.99,isbn:"978-1-7634-0055-7",pg:192,y:2025,c:"#2f6f73",k:"#e3f4f2",eb:0,s:{collins:5,eastpoint:2,geelong:3,ballarat:2,bendigo:1,doncaster:4},
+  d:"Ten-year-old Ada maps a city that keeps changing overnight. Ages 8 to 12.",pick:["Sam, Ballarat","Great for confident readers who love adventure."]},
+ {id:"wombat",t:"Wombat Goes Exploring",a:"Kate Lindsay",cat:"children",rb:0,p:14.99,isbn:"978-1-7634-0021-2",pg:32,y:2024,c:"#6b8f3a",k:"#fff8e1",eb:0,s:{collins:7,eastpoint:4,geelong:3,ballarat:3,bendigo:2,doncaster:5},
+  d:"A curious wombat leaves his burrow for the very first time. Picture book, ages 2 to 6.",pick:null},
+ {id:"small-rooms",t:"Small Rooms",a:"Daniel Okafor",cat:"fiction",rb:0,p:27.99,isbn:"978-1-7634-0189-9",pg:272,y:2026,c:"#b5532a",k:"#fff1e6",eb:0,s:{collins:3,eastpoint:1,geelong:2,ballarat:0,bendigo:1,doncaster:2},
+  d:"Five neighbours in a Footscray apartment block, one long, hot summer.",pick:null},
+ {id:"herbs",t:"Grow Your Own Herbs",a:"Ruth Callaghan",cat:"nonfiction",rb:0,p:34.99,isbn:"978-1-7634-0266-7",pg:224,y:2025,c:"#426b4e",k:"#eef6ea",eb:0,s:{collins:2,eastpoint:2,geelong:1,ballarat:1,bendigo:2,doncaster:2},
+  d:"A practical guide to growing herbs on balconies and in small gardens, written for Victorian conditions.",pick:null}
+];
+const CATS={fiction:"Fiction",mystery:"Crime and mystery",ya:"Young adult",children:"Children",nonfiction:"Non-fiction",rainbow:"Rainbow Books Publishing"};
+const EVENTS=[
+ {id:"e1",d:"17",m:"Apr",t:"Veronica Watson in conversation",where:"collins",time:"Saturday 17 April, 2pm to 3:30pm",price:"Free",info:"Veronica talks about The Silent Harbour, followed by a book signing. Seats are limited.",seats:12},
+ {id:"e2",d:"22",m:"Apr",t:"Thursday Book Club: The Orchard at Wandin",where:"eastpoint",time:"Thursday 22 April, 7pm to 8:30pm",price:"$10, includes tea and cake",info:"Our monthly book club. Book club members get 15% off the chosen title.",seats:8},
+ {id:"e3",d:"24",m:"Apr",t:"Saturday story time",where:"doncaster",time:"Saturday 24 April, 10:30am to 11am",price:"Free",info:"Picture book readings for children aged 2 to 6. This month: Wombat Goes Exploring.",seats:20},
+ {id:"e4",d:"6",m:"May",t:"Dr Jonathan Croft: A History of the Yarra",where:"geelong",time:"Thursday 6 May, 6:30pm to 7:30pm",price:"Free",info:"An illustrated talk on the history of the Yarra River, with a book signing afterwards.",seats:15},
+ {id:"e5",d:"15",m:"May",t:"Young adult launch night: Salt and Ember",where:"collins",time:"Saturday 15 May, 5pm to 7pm",price:"Free",info:"Readings, a quiz and giveaways for readers aged 13 and up.",seats:30}
+];
+const state={cart:[],method:"deliver",store:"collins",step:1,details:{},pay:{},user:null,lastOrder:null,filter:"all",sort:"pop",q:"",reg:null,regDone:{},pubSent:false};
+const $=s=>document.querySelector(s);
+const money=n=>"$"+n.toFixed(2);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const book=id=>BOOKS.find(b=>b.id===id);
+const store=id=>STORES.find(s=>s.id===id);
+const unitPrice=(b,f)=>f==="ebook"?Math.round((b.p*0.6)*100)/100:b.p;
+function cover(b,big){return `<div class="cover${big?" big":""}" style="background:${b.c};color:${b.k}"><div class="imp">${b.rb?"Rainbow Books Publishing":"&nbsp;"}</div><div><div class="t">${esc(b.t)}</div></div><div class="a">${esc(b.a)}</div></div>`}
+function card(b){return `<div class="bk"><a class="cv" href="#book-${b.id}" aria-label="${esc(b.t)}">${cover(b)}</a>
+ <a class="ti" href="#book-${b.id}">${esc(b.t)}</a><div class="au">${esc(b.a)}</div>
+ <div class="row" style="justify-content:space-between"><span class="pr">${money(b.p)}</span><button class="btn small alt" data-act="add" data-id="${b.id}">Add to cart</button></div></div>`}
+function cartCount(){return state.cart.reduce((s,l)=>s+l.qty,0)}
+function totals(){const sub=state.cart.reduce((s,l)=>s+unitPrice(book(l.id),l.fmt)*l.qty,0);
+ const physical=state.cart.some(l=>l.fmt!=="ebook");
+ const ship=state.method==="collect"||!physical?0:(sub>=60?0:7.95);
+ return {sub,ship,total:sub+ship,gst:(sub+ship)/11}}
+function refreshHeader(){$("#cartLink").textContent=`Cart (${cartCount()})`;$("#acctLink").textContent=state.user?"My account":"Sign in"}
+function add(id,fmt="paperback",qty=1){const l=state.cart.find(x=>x.id===id&&x.fmt===fmt);if(l)l.qty+=qty;else state.cart.push({id,fmt,qty});refreshHeader();toast(`Added ${book(id).t} to your cart`)}
+let tt;function toast(m){let el=$("#toast");if(!el){el=document.createElement("div");el.id="toast";el.setAttribute("role","status");el.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:6px;font-size:14px;z-index:20;max-width:calc(100% - 32px)";document.body.appendChild(el)}el.textContent=m;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2200)}
+
+const V={};
+V.home=()=>{const picks=BOOKS.filter(b=>b.pick).slice(0,4);const rb=BOOKS.filter(b=>b.rb);
+ return `<section class="hero"><div class="stack">
+  <span class="eyebrow">New from Rainbow Books Publishing</span>
+  <h1>Veronica Watson's The Silent Harbour is here</h1>
+  <p class="lead">Order online and collect from any of our 44 stores, usually within two hours. Or meet Veronica at Collins Street on Saturday 17 April.</p>
+  <div class="row"><a class="btn" href="#book-silent-harbour">See the book</a><a class="btn alt" href="#events">Book a seat at the signing</a></div>
+ </div><div class="heroshelf">${[book("orchard-wandin"),book("silent-harbour"),book("history-yarra")].map(b=>cover(b)).join("")}</div></section>
+ <section class="three" style="margin-top:36px">
+  <div class="panel stack" style="gap:8px"><h3>Click and collect</h3><p class="muted" style="margin:0">Order online and pick up from your local store. We will text you when it is ready. Free.</p></div>
+  <div class="panel stack" style="gap:8px"><h3>Free delivery over $60</h3><p class="muted" style="margin:0">Orders under $60 are $7.95 to anywhere in Australia. Usually 2 to 4 business days.</p></div>
+  <div class="panel stack" style="gap:8px"><h3>Rainbow Rewards</h3><p class="muted" style="margin:0">Earn a point for every dollar, in store and online. 200 points gets you a $10 voucher.</p></div>
+ </section>
+ <section class="sec"><div class="sechead"><h2>Staff picks this month</h2><a href="#shop">Browse all books</a></div><div class="grid">${picks.map(card).join("")}</div></section>
+ <section class="sec"><div class="sechead"><h2>Coming up in our stores</h2><a href="#events">All events</a></div>
+  <div class="three">${EVENTS.slice(0,3).map(e=>`<div class="panel event"><div class="date"><b>${e.d}</b><span>${e.m}</span></div><div class="stack" style="gap:6px;min-width:0"><h3>${esc(e.t)}</h3><div class="muted" style="font-size:14px">${store(e.where).name} store. ${e.time}</div><a href="#events">Register</a></div></div>`).join("")}</div></section>
+ <section class="sec"><div class="sechead"><h2>Published by us</h2><a href="#shop-rainbow">All Rainbow Books Publishing titles</a></div>
+  <p class="lead" style="margin:0">Since 1946 we have published Australian writers. Our own titles are also available as eBooks.</p><div class="grid">${rb.map(card).join("")}</div></section>`};
+V.shop=(cat)=>{state.filter=cat||"all";let list=BOOKS.filter(b=>state.filter==="all"||(state.filter==="rainbow"?b.rb:b.cat===state.filter));
+ if(state.q){const q=state.q.toLowerCase();list=BOOKS.filter(b=>(b.t+" "+b.a+" "+b.isbn).toLowerCase().includes(q))}
+ if(state.sort==="low")list=[...list].sort((a,b)=>a.p-b.p);if(state.sort==="high")list=[...list].sort((a,b)=>b.p-a.p);if(state.sort==="new")list=[...list].sort((a,b)=>b.y-a.y);
+ const title=state.q?`Results for "${esc(state.q)}"`:(state.filter==="all"?"All books":CATS[state.filter]);
+ return `<div class="shop"><aside><div class="filters">${[["all","All books"],...Object.entries(CATS)].map(([k,v])=>`<button data-act="filter" data-f="${k}" class="${!state.q&&state.filter===k?"on":""}">${v}</button>`).join("")}</div></aside>
+ <div class="stack" style="gap:20px"><div class="sechead"><div><h1 style="font-size:30px">${title}</h1><div class="muted">${list.length} ${list.length===1?"book":"books"}</div></div>
+  <div style="min-width:200px"><label for="sort">Sort by</label><select id="sort" data-act="sort">${[["pop","Most popular"],["new","Newest"],["low","Price, low to high"],["high","Price, high to low"]].map(([k,v])=>`<option value="${k}" ${state.sort===k?"selected":""}>${v}</option>`).join("")}</select></div></div>
+  ${list.length?`<div class="grid">${list.map(card).join("")}</div>`:`<div class="panel"><h3>No books match "${esc(state.q)}"</h3><p class="muted">Check the spelling, or search by author or ISBN. Staff in any store can also order in a title for you.</p><button class="btn alt" data-act="clearq">Show all books</button></div>`}
+ </div></div>`};
+V.book=(id)=>{const b=book(id);if(!b)return V.notfound();state.fmt=state.fmt||"paperback";const f=b.eb?state.fmt:"paperback";
+ const my=store(state.store);
+ return `<p><a href="#shop-${b.rb?"rainbow":b.cat}">Back to ${b.rb?"Rainbow Books Publishing":CATS[b.cat]}</a></p>
+ <div class="bookpage"><div>${cover(b,true)}</div><div class="stack" style="gap:18px">
+  <div class="row" style="gap:8px">${b.rb?'<span class="tag brass">Rainbow Books Publishing</span>':""}<span class="tag">${CATS[b.cat]}</span></div>
+  <div><h1>${esc(b.t)}</h1><div class="lead">by ${esc(b.a)}</div></div>
+  <p style="margin:0;max-width:62ch">${esc(b.d)}</p>
+  <div><label>Format</label><div class="opt">
+   <label class="${f==="paperback"?"on":""}"><input type="radio" name="fmt" value="paperback" data-act="fmt" ${f==="paperback"?"checked":""}> Paperback ${money(b.p)}</label>
+   ${b.eb?`<label class="${f==="ebook"?"on":""}"><input type="radio" name="fmt" value="ebook" data-act="fmt" ${f==="ebook"?"checked":""}> eBook ${money(unitPrice(b,"ebook"))}</label>`:""}
+  </div>${b.eb?"":'<div class="hint">eBooks are available for Rainbow Books Publishing titles only.</div>'}</div>
+  <div class="row"><div class="qty" aria-label="Quantity"><button data-act="bq" data-d="-1" aria-label="Fewer">-</button><span id="bq">1</span><button data-act="bq" data-d="1" aria-label="More">+</button></div>
+   <button class="btn" data-act="addq" data-id="${b.id}">Add to cart</button>
+   ${f==="paperback"?`<button class="btn alt" data-act="collect" data-id="${b.id}">Click and collect</button>`:""}</div>
+  ${f==="paperback"?`<div class="panel" style="padding:16px 18px"><div class="sechead"><b>Stock in stores</b><span class="muted" style="font-size:13px">Updated live from store tills</span></div>
+   <div class="tablewrap"><table style="margin-top:6px"><tbody>${STORES.map(s=>`<tr><td>${s.name}${s.id===my.id?' <span class="tag">My store</span>':""}</td><td class="r">${b.s[s.id]>0?`<span style="color:var(--good);font-weight:600">${b.s[s.id]} in stock</span>`:'<span class="muted">Order in, 3 to 5 days</span>'}</td></tr>`).join("")}</tbody></table></div></div>`:'<div class="secure">eBooks are delivered to your Rainbow Books account straight after payment.</div>'}
+  ${b.pick?`<div class="note"><b>Staff pick from ${esc(b.pick[0])}</b>${esc(b.pick[1])}</div>`:""}
+  <dl class="facts"><dt>ISBN</dt><dd class="mono">${b.isbn}</dd><dt>Pages</dt><dd>${b.pg}</dd><dt>Published</dt><dd>${b.y}</dd><dt>Publisher</dt><dd>${b.rb?"Rainbow Books Publishing, Melbourne":"Independent publisher"}</dd></dl>
+ </div></div>`};
+V.cart=()=>{if(!state.cart.length)return `<div class="panel stack" style="max-width:640px"><h1>Your cart is empty</h1><p class="muted" style="margin:0">Find something to read in our staff picks or new releases.</p><div><a class="btn" href="#shop">Browse books</a></div></div>`;
+ const t=totals();
+ return `<h1 style="margin-bottom:20px">Your cart</h1><div class="co"><div class="panel"><div class="tablewrap"><table><thead><tr><th>Book</th><th>Format</th><th>Qty</th><th class="r">Price</th><th></th></tr></thead><tbody>
+ ${state.cart.map((l,i)=>{const b=book(l.id);return `<tr><td><a href="#book-${b.id}" style="font-weight:600">${esc(b.t)}</a><div class="muted" style="font-size:13px">${esc(b.a)}</div></td><td>${l.fmt==="ebook"?"eBook":"Paperback"}</td>
+ <td><div class="qty"><button data-act="cq" data-i="${i}" data-d="-1" aria-label="Fewer">-</button><span>${l.qty}</span><button data-act="cq" data-i="${i}" data-d="1" aria-label="More">+</button></div></td>
+ <td class="r">${money(unitPrice(b,l.fmt)*l.qty)}</td><td class="r"><button class="linkbtn" data-act="rm" data-i="${i}">Remove</button></td></tr>`}).join("")}
+ </tbody></table></div>
+ <div class="stack" style="margin-top:20px;gap:10px"><label>How would you like to get your order?</label>
+  <div class="opt"><label class="${state.method==="deliver"?"on":""}"><input type="radio" name="m" value="deliver" data-act="method" ${state.method==="deliver"?"checked":""}> Home delivery</label>
+  <label class="${state.method==="collect"?"on":""}"><input type="radio" name="m" value="collect" data-act="method" ${state.method==="collect"?"checked":""}> Click and collect (free)</label></div>
+  ${state.method==="collect"?`<div style="max-width:360px"><label for="cstore">Collect from</label><select id="cstore" data-act="store">${STORES.map(s=>`<option value="${s.id}" ${s.id===state.store?"selected":""}>${s.name}, ${s.area}</option>`).join("")}</select></div>`:""}
+ </div></div>
+ <aside class="panel sum"><h3>Order summary</h3><div class="line"><span>Subtotal</span><span>${money(t.sub)}</span></div>
+ <div class="line"><span>${state.method==="collect"?"Click and collect":"Delivery"}</span><span>${t.ship?money(t.ship):"Free"}</span></div>
+ ${state.method==="deliver"&&t.sub<60?`<div class="hint">Spend ${money(60-t.sub)} more for free delivery.</div>`:""}
+ <div class="line tot"><span>Total</span><span>${money(t.total)}</span></div><div class="hint">Includes GST of ${money(t.gst)}</div>
+ <a class="btn" href="#checkout" style="margin-top:6px">Go to checkout</a><a href="#shop" style="text-align:center;font-size:14px">Keep shopping</a></aside></div>`};
+function summary(){const t=totals();return `<aside class="panel sum"><h3>Your order</h3>${state.cart.map(l=>{const b=book(l.id);return `<div class="line"><span>${l.qty} x ${esc(b.t)}${l.fmt==="ebook"?" (eBook)":""}</span><span>${money(unitPrice(b,l.fmt)*l.qty)}</span></div>`}).join("")}
+ <div class="line"><span>${state.method==="collect"?"Collect from "+store(state.store).name:"Delivery"}</span><span>${t.ship?money(t.ship):"Free"}</span></div>
+ <div class="line tot"><span>Total</span><span>${money(t.total)}</span></div><div class="hint">Includes GST of ${money(t.gst)}</div></aside>`}
+function fld(id,lab,type,val,opt={}){const e=opt.err;return `<div class="field ${opt.full?"full":""}"><label for="${id}">${lab}${opt.req===false?"":' <span class="req">*</span>'}</label><input id="${id}" type="${type}" value="${esc(val||"")}" ${opt.ph?`placeholder="${opt.ph}"`:""} ${opt.ac?`autocomplete="${opt.ac}"`:""} ${opt.im?`inputmode="${opt.im}"`:""} class="${e?"bad":""}">${e?`<div class="err">${e}</div>`:opt.hint?`<div class="hint">${opt.hint}</div>`:""}</div>`}
+V.checkout=()=>{if(!state.cart.length)return V.cart();const s=state.step,d=state.details,p=state.pay,E=state.errs||{};
+ const steps=["Your details","Payment","Review and place order"].map((n,i)=>`<div class="${i+1===s?"on":i+1<s?"done":""}">${i+1}. ${n}</div>`).join("");
+ let body="";
+ if(s===1)body=`<form class="panel stack" id="f1" novalidate><h2>Your details</h2>${state.user?"":'<div class="secure">Have an account? <a href="#account">Sign in</a> to use your saved details and earn Rainbow Rewards points.</div>'}
+  <div class="fgrid">${fld("fn","First name","text",d.fn,{err:E.fn,ac:"given-name"})}${fld("ln","Last name","text",d.ln,{err:E.ln,ac:"family-name"})}
+  ${fld("em","Email","email",d.em,{err:E.em,ac:"email",hint:"We send your receipt and order updates here."})}${fld("ph","Mobile number","tel",d.ph,{err:E.ph,ac:"tel",ph:"04XX XXX XXX",hint:"For your collection text."})}</div>
+  ${state.method==="deliver"&&state.cart.some(l=>l.fmt!=="ebook")?`<h3>Delivery address</h3><div class="fgrid">${fld("ad","Street address","text",d.ad,{err:E.ad,full:true,ac:"street-address"})}${fld("su","Suburb","text",d.su,{err:E.su,ac:"address-level2"})}
+   <div class="field"><label for="pc">Postcode <span class="req">*</span></label><input id="pc" type="text" inputmode="numeric" maxlength="4" value="${esc(d.pc||"")}" class="${E.pc?"bad":""}">${E.pc?`<div class="err">${E.pc}</div>`:'<div class="hint">4 digits</div>'}</div></div>`
+  :state.method==="collect"?`<div class="secure">Collecting from <b>${store(state.store).name}</b>, ${store(state.store).addr}. <a href="#cart">Change</a></div>`:""}
+  <div class="row" style="justify-content:space-between"><a href="#cart">Back to cart</a><button class="btn" type="submit">Continue to payment</button></div></form>`;
+ if(s===2)body=`<form class="panel stack" id="f2" novalidate><h2>Payment</h2>
+  <div class="opt"><label class="${(p.m||"card")==="card"?"on":""}"><input type="radio" name="pm" value="card" data-act="pm" ${(p.m||"card")==="card"?"checked":""}> Credit or debit card</label>
+  <label class="${p.m==="paypal"?"on":""}"><input type="radio" name="pm" value="paypal" data-act="pm" ${p.m==="paypal"?"checked":""}> PayPal</label>
+  <label class="${p.m==="gift"?"on":""}"><input type="radio" name="pm" value="gift" data-act="pm" ${p.m==="gift"?"checked":""}> Rainbow Books gift card</label></div>
+  ${(p.m||"card")==="card"?`<div class="fgrid">${fld("cn","Name on card","text",p.cn,{err:E.cn,full:true,ac:"cc-name"})}
+   ${fld("cc","Card number","text",p.cc,{err:E.cc,full:true,im:"numeric",ph:"1234 5678 9012 3456",ac:"cc-number",hint:"16 digits. Visa and Mastercard accepted."})}
+   ${fld("ex","Expiry date","text",p.ex,{err:E.ex,ph:"MM/YY",ac:"cc-exp",hint:"Format MM/YY"})}${fld("cv","Security code (CVC)","text",p.cv,{err:E.cv,ph:"123",im:"numeric",ac:"cc-csc",hint:"3 digits on the back of the card"})}</div>`
+  :p.m==="paypal"?'<div class="secure">You will be sent to PayPal to log in and approve the payment, then brought back here to place your order.</div>'
+  :`<div class="fgrid">${fld("gc","Gift card number","text",p.gc,{err:E.gc,im:"numeric",hint:"16 digits on the back of the card"})}${fld("gp","PIN","text",p.gp,{err:E.gp,im:"numeric",hint:"4 digits"})}</div>`}
+  <div class="row" style="justify-content:space-between"><button class="linkbtn" type="button" data-act="step" data-s="1">Back to your details</button><button class="btn" type="submit">Review order</button></div></form>`;
+ if(s===3){const pm=(p.m||"card")==="card"?`Card ending in ${(p.cc||"").replace(/\D/g,"").slice(-4)}`:p.m==="paypal"?"PayPal":"Gift card";
+  body=`<div class="panel stack"><h2>Check your order</h2>
+  <dl class="facts"><dt>Name</dt><dd>${esc(d.fn)} ${esc(d.ln)}</dd><dt>Email</dt><dd>${esc(d.em)}</dd><dt>Mobile</dt><dd>${esc(d.ph)}</dd>
+  <dt>${state.method==="collect"?"Collect from":"Deliver to"}</dt><dd>${state.method==="collect"?store(state.store).name+", "+store(state.store).addr:(state.cart.some(l=>l.fmt!=="ebook")?esc(d.ad)+", "+esc(d.su)+" "+esc(d.pc):"eBooks only, sent to your account")}</dd><dt>Payment</dt><dd>${pm}</dd></dl>
+  <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500"><input type="checkbox" id="news" style="margin-top:5px"> Send me news about events, new releases and Rainbow Rewards offers</label>
+  <div class="row" style="justify-content:space-between"><button class="linkbtn" data-act="step" data-s="2">Back to payment</button><button class="btn" data-act="place">Place order and pay ${money(totals().total)}</button></div></div>`}
+ return `<h1 style="margin-bottom:18px">Checkout</h1><div class="steps">${steps}</div><div class="co">${body}${summary()}</div>`};
+V.done=()=>{const o=state.lastOrder;if(!o)return V.home();
+ return `<div class="stack" style="max-width:760px"><div class="ok stack" style="gap:6px"><span class="eyebrow" style="color:var(--good)">Order placed</span><h1>Thank you, ${esc(o.name)}</h1>
+ <p style="margin:0">Your order number is <b class="mono" style="font-size:15px">${o.no}</b>. We have emailed a receipt to ${esc(o.email)}.</p></div>
+ <div class="panel stack"><h2>What happens next</h2>${o.method==="collect"?`<p style="margin:0">We are picking your books at <b>${o.store}</b>. We will text you when they are ready, usually within two hours. Bring your order number or the text message.</p>`:`<p style="margin:0">Your order will be posted within one business day and should arrive in 2 to 4 business days. You can track it from My account.</p>`}
+ <div class="tablewrap"><table><tbody>${o.lines.map(l=>`<tr><td>${l.qty} x ${esc(l.t)}${l.fmt==="ebook"?" (eBook)":""}</td><td class="r">${money(l.amt)}</td></tr>`).join("")}<tr><td><b>Total paid</b></td><td class="r"><b>${money(o.total)}</b></td></tr></tbody></table></div>
+ <p class="muted" style="margin:0">You earned ${Math.floor(o.total)} Rainbow Rewards points with this order.</p></div>
+ <div class="row"><a class="btn" href="#shop">Keep shopping</a><a class="btn alt" href="#events">See upcoming events</a></div></div>`};
+V.events=()=>`<div class="stack" style="gap:6px;margin-bottom:24px"><span class="eyebrow">Author events and book clubs</span><h1>Meet the writers, join a book club</h1><p class="lead" style="margin:0">Most events are free. Registering holds your seat and we will send you a reminder the day before.</p></div>
+ <div class="stack">${EVENTS.map(e=>{const s=store(e.where);const done=state.regDone[e.id];const open=state.reg===e.id;const E=state.errs||{};
+ return `<div class="panel event"><div class="date"><b>${e.d}</b><span>${e.m}</span></div><div class="stack" style="gap:8px;min-width:0">
+  <div class="sechead"><h3>${esc(e.t)}</h3><span class="tag">${e.seats} seats left</span></div>
+  <div class="muted" style="font-size:14px">${s.name} store, ${s.addr}<br>${e.time}. ${e.price}</div><p style="margin:0">${esc(e.info)}</p>
+  ${done?`<div class="ok">You are registered for ${done} ${done==="1"?"seat":"seats"}. A confirmation has been emailed to you.</div>`:open?`<form class="fgrid" id="rf" data-e="${e.id}" novalidate>${fld("rn","Your name","text",state.user?state.user.name:"",{err:E.rn})}${fld("re","Email","email",state.user?state.user.email:"",{err:E.re})}
+   <div class="field"><label for="rs">Seats <span class="req">*</span></label><select id="rs">${[1,2,3,4].map(n=>`<option>${n}</option>`).join("")}</select><div class="hint">Up to 4 per booking</div></div>
+   <div class="field" style="display:flex;align-items:flex-end;gap:10px"><button class="btn" type="submit">Confirm registration</button><button class="linkbtn" type="button" data-act="reg" data-e="">Cancel</button></div></form>`
+  :`<div><button class="btn small" data-act="reg" data-e="${e.id}">Register</button></div>`}
+ </div></div>`}).join("")}</div>`;
+V.stores=()=>`<div class="stack" style="gap:6px;margin-bottom:24px"><h1>Find a store</h1><p class="lead" style="margin:0">44 stores across Melbourne and regional Victoria. Set your store to see its stock on every book page and for faster click and collect.</p></div>
+ <div class="storelist">${STORES.map(s=>`<div class="panel stack" style="gap:8px"><div class="sechead"><h3>${s.name}</h3>${s.id===state.store?'<span class="tag">My store</span>':s.flag?`<span class="tag brass">${s.flag}</span>`:""}</div>
+ <div>${s.addr}</div><div class="muted" style="font-size:14px">${s.hours}</div><div class="mono">${s.phone}</div>
+ <div>${s.id===state.store?'<span class="muted" style="font-size:14px">This is your store</span>':`<button class="btn small alt" data-act="mystore" data-s="${s.id}">Make this my store</button>`}</div></div>`).join("")}</div>
+ <p class="muted" style="margin-top:20px">Showing 6 of 44 stores.</p>`;
+V.account=()=>{const E=state.errs||{};
+ if(!state.user)return `<div class="co"><form class="panel stack" id="sf" novalidate><h1 style="font-size:30px">Sign in</h1>
+  ${fld("se","Email","email","",{err:E.se,ac:"email"})}${fld("sp","Password","password","",{err:E.sp,ac:"current-password"})}
+  <div class="row" style="justify-content:space-between"><a href="#account">Forgot your password?</a><button class="btn" type="submit">Sign in</button></div></form>
+  <aside class="panel stack"><h3>New to Rainbow Books?</h3><p class="muted" style="margin:0">Create an account to track orders, save your store and earn Rainbow Rewards points on every purchase.</p><button class="btn alt" data-act="demo">Create an account</button></aside></div>`;
+ const u=state.user,orders=[...(state.lastOrder?[{no:state.lastOrder.no,date:"Today",total:state.lastOrder.total,st:state.lastOrder.method==="collect"?"Being picked":"Processing"}]:[]),{no:"RB-2027-31842",date:"28 March 2027",total:52.97,st:"Collected"},{no:"RB-2027-29107",date:"2 March 2027",total:39.99,st:"Delivered"}];
+ return `<div class="sechead" style="margin-bottom:22px"><div><span class="eyebrow">My account</span><h1>Hello, ${esc(u.name)}</h1></div><button class="btn alt small" data-act="signout">Sign out</button></div>
+ <div class="three" style="margin-bottom:24px"><div class="panel"><div class="muted">Rainbow Rewards points</div><div style="font-size:32px;font-weight:700;font-family:var(--display)">${u.points+(state.lastOrder?Math.floor(state.lastOrder.total):0)}</div><div class="hint">${200-((u.points+(state.lastOrder?Math.floor(state.lastOrder.total):0))%200)} points to your next $10 voucher</div></div>
+ <div class="panel"><div class="muted">My store</div><div style="font-size:22px;font-weight:700;font-family:var(--display)">${store(state.store).name}</div><a href="#stores">Change store</a></div>
+ <div class="panel"><div class="muted">My book club</div><div style="font-size:22px;font-weight:700;font-family:var(--display)">Thursday Book Club</div><a href="#events">See next meeting</a></div></div>
+ <div class="panel"><h2 style="margin-bottom:10px">My orders</h2><div class="tablewrap"><table><thead><tr><th>Order number</th><th>Date</th><th class="r">Total</th><th>Status</th></tr></thead><tbody>
+ ${orders.map(o=>`<tr><td class="mono">${o.no}</td><td>${o.date}</td><td class="r">${money(o.total)}</td><td><span class="tag ${/Collected|Delivered/.test(o.st)?"":"brass"}">${o.st}</span></td></tr>`).join("")}</tbody></table></div></div>`};
+V.publish=()=>{const E=state.errs||{};return `<div class="stack" style="gap:6px;margin-bottom:26px"><span class="eyebrow">Rainbow Books Publishing</span><h1>Publish your book with people you can trust</h1>
+ <p class="lead" style="margin:0">We have published Australian writers for over 75 years. Now we offer the same editors, designers and printers to independent authors, with our books sold in all 44 stores and online.</p></div>
+ <div class="three">${[["Editing","from $1,500","A structural edit and a copy edit by our in-house editors."],["Cover and design","from $900","A professional cover, typesetting for print, and an eBook file."],["Print on demand and sales","from $450","Printing in small runs, an ISBN, and listing in our stores and online shop."]].map(x=>`<div class="panel stack" style="gap:8px"><h3>${x[0]}</h3><div class="mono" style="color:var(--brass);font-size:14px">${x[1]}</div><p class="muted" style="margin:0">${x[2]}</p></div>`).join("")}</div>
+ <div class="panel" style="margin-top:24px;max-width:760px">${state.pubSent?`<div class="ok">Thanks. Our publishing team will reply within five business days.</div>`:`<form class="stack" id="pf" novalidate><h2>Talk to our publishing team</h2><div class="fgrid">
+ ${fld("pn","Your name","text","",{err:E.pn})}${fld("pe","Email","email","",{err:E.pe})}
+ <div class="field"><label for="pg">Genre</label><select id="pg"><option>Fiction</option><option>Non-fiction</option><option>Children's</option><option>Young adult</option><option>Poetry</option></select></div>
+ <div class="field"><label for="pw">Approximate word count</label><input id="pw" type="number" min="1000" step="1000" placeholder="80000"></div>
+ <div class="field full"><label for="pm">Tell us about your book</label><textarea id="pm" rows="4"></textarea></div></div>
+ <div><button class="btn" type="submit">Send enquiry</button></div></form>`}</div>`};
+V.help=()=>{const q=(t,body)=>`<details><summary>${t}</summary>${body}</details>`;
+ return `<div class="stack" style="gap:6px;margin-bottom:24px"><span class="eyebrow">Help centre</span><h1>How can we help?</h1><p class="lead" style="margin:0">Answers to common questions about ordering, collecting, delivery and your account.</p></div>
+ <div class="helpgrid"><div class="stack" style="gap:28px">
+ <section class="stack" style="gap:12px"><h2>Ordering</h2><div class="faq">
+  ${q("How do I order a book online?",`<ol><li>Find a book using the search bar or the categories at the top of the page.</li><li>Choose paperback or eBook and select Add to cart.</li><li>Open your cart and choose home delivery or click and collect.</li><li>Select Go to checkout, enter your details and payment, then check your order and select Place order.</li></ol><p>You will see an order number on screen and receive a receipt by email.</p>`)}
+  ${q("Can I change or cancel my order?",`<p>You can cancel an order until we start packing it. Call customer service with your order number. Once a click and collect order is ready, you can also cancel it at the store.</p>`)}
+  ${q("Which payment methods do you accept?",`<p>Visa, Mastercard, PayPal and Rainbow Books gift cards. All prices are in Australian dollars and include GST.</p>`)}
+  ${q("What are eBooks and how do I read them?",`<p>Books from Rainbow Books Publishing are also sold as eBooks. After you pay, the eBook appears in My account and can be read on a phone, tablet or e-reader.</p>`)}
+ </div></section>
+ <section class="stack" style="gap:12px"><h2>Click and collect, delivery and returns</h2><div class="faq">
+  ${q("How does click and collect work?",`<p>Choose click and collect in your cart and pick your store. We text you when your books are ready, usually within two hours if the store has them in stock. Bring your order number or the text message. Orders are held for 7 days.</p>`)}
+  ${q("How much is delivery and how long does it take?",`<p>Delivery is free on orders over $60. Orders under $60 cost $7.95. Most orders arrive in 2 to 4 business days. You can follow your order in My account.</p>`)}
+  ${q("Can I return a book?",`<p>Yes. Return any book in its original condition within 30 days with your receipt or order number, at any Rainbow Books store or by post. eBooks cannot be returned once downloaded.</p>`)}
+ </div></section>
+ <section class="stack" style="gap:12px"><h2>Account, rewards and events</h2><div class="faq">
+  ${q("How do Rainbow Rewards points work?",`<p>You earn 1 point for every dollar you spend in store or online. Every 200 points gives you a $10 voucher. Sign in or create an account to collect points online.</p>`)}
+  ${q("I forgot my password",`<p>Select Forgot your password on the sign in page and enter your email. We will send you a link to set a new password.</p>`)}
+  ${q("How do I book a seat at an event?",`<p>Go to Events and book clubs, choose an event and select Register. Most events are free. We send a reminder the day before.</p>`)}
+ </div></section>
+ <section class="stack" style="gap:12px"><h2>If you see an error message</h2>
+  <div class="panel tablewrap" style="padding:8px 14px"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody>
+  <tr><td>Card number must be 16 digits</td><td>Check the long number on the front of your card and type it again.</td></tr>
+  <tr><td>This card has expired</td><td>Check the expiry date (MM/YY) or use a different card.</td></tr>
+  <tr><td>Enter a 10-digit mobile number starting with 04</td><td>Type your Australian mobile number, for example 0412 345 678.</td></tr>
+  <tr><td>Postcode must be 4 digits</td><td>Enter your 4-digit Australian postcode.</td></tr>
+  <tr><td>No books match your search</td><td>Check the spelling or search by author or ISBN. Staff can also order a book in for you.</td></tr>
+  </tbody></table></div></section>
+ </div>
+ <aside class="panel stack" style="gap:12px"><h3>Still need help?</h3>
+  <div><div class="muted" style="font-size:14px">Customer service</div><div style="font-weight:600">1300 975 708</div><div class="muted" style="font-size:14px">Mon to Fri, 9am to 5pm</div></div>
+  <div><div class="muted" style="font-size:14px">Email</div><div class="mono">help@rainbowbooks.example</div><div class="muted" style="font-size:14px">We reply within one business day</div></div>
+  <div><div class="muted" style="font-size:14px">In store</div><div>Any of our 44 stores can help with orders and returns.</div><a href="#stores">Find a store</a></div>
+ </aside></div>`};
+V.notfound=()=>`<div class="panel stack" style="max-width:600px"><h1>We could not find that page</h1><p class="muted" style="margin:0">It may have moved. Try searching for a book or go back to the home page.</p><div><a class="btn" href="#home">Go to home page</a></div></div>`;
+
+let CUR=(location.hash||"#home").slice(1)||"home";
+function onNav(){if(!CUR.startsWith("shop"))state.q="";if(CUR.startsWith("book-"))state.fmt="paperback";route()}
+function go(h){h=h||"home";CUR=h;try{if(location.hash!=="#"+h)history.pushState(null,"","#"+h)}catch(e){}onNav()}
+window.addEventListener("popstate",()=>{CUR=(location.hash||"#home").slice(1)||"home";onNav()});
+window.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a)return;e.preventDefault();e.stopPropagation();const q=$("#q");if(q&&!a.getAttribute("href").startsWith("#shop"))q.value="";go(a.getAttribute("href").slice(1))},true);
+function route(){const h=CUR;state.errs=null;let html,key=h;
+ if(h==="home")html=V.home();else if(h==="shop")html=V.shop("all");else if(h.startsWith("shop-"))html=V.shop(h.slice(5));
+ else if(h.startsWith("book-")){html=V.book(h.slice(5));key="shop"}else if(V[h]&&h!=="book"&&h!=="shop")html=V[h]();else html=V.notfound();
+ $("#view").innerHTML=html;
+ document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("on",a.dataset.r===h||(h==="shop"&&a.dataset.r==="shop")));
+ refreshHeader();window.scrollTo(0,0)}
+function rerender(keepScroll){const y=window.scrollY;const h=CUR;const e=state.errs;route();state.errs=e;
+ if(e){const h2=CUR;const html=h2.startsWith("book-")?V.book(h2.slice(5)):h2.startsWith("shop")?V.shop(h2==="shop"?"all":h2.slice(5)):V[h2]?V[h2]():"";if(html)$("#view").innerHTML=html}
+ if(keepScroll)window.scrollTo(0,y)}
+window.addEventListener("hashchange",()=>{const h=(location.hash||"#home").slice(1)||"home";if(h!==CUR){CUR=h;onNav()}});
+
+document.addEventListener("click",e=>{const el=e.target.closest("[data-act]");if(!el)return;const a=el.dataset.act;
+ if(el.tagName==="INPUT"||el.tagName==="SELECT")return;
+ if(a==="add")add(el.dataset.id);
+ if(a==="addq"){add(el.dataset.id,state.fmt||"paperback",+$("#bq").textContent)}
+ if(a==="collect"){add(el.dataset.id,"paperback",+$("#bq").textContent);state.method="collect";go("cart")}
+ if(a==="bq"){const n=Math.min(10,Math.max(1,+$("#bq").textContent+ +el.dataset.d));$("#bq").textContent=n}
+ if(a==="cq"){const l=state.cart[+el.dataset.i];l.qty=Math.max(1,Math.min(10,l.qty+ +el.dataset.d));rerender(true)}
+ if(a==="rm"){state.cart.splice(+el.dataset.i,1);rerender(true)}
+ if(a==="filter"){state.q="";$("#q").value="";go(el.dataset.f==="all"?"shop":"shop-"+el.dataset.f)}
+ if(a==="clearq"){state.q="";$("#q").value="";go("shop")}
+ if(a==="step"){state.step=+el.dataset.s;rerender()}
+ if(a==="place"){const t=totals();const d=state.details;
+  state.lastOrder={no:"RB-2027-"+(32000+Math.floor(Math.random()*900)),name:d.fn,email:d.em,method:state.method,store:store(state.store).name,total:t.total,
+   lines:state.cart.map(l=>({t:book(l.id).t,qty:l.qty,fmt:l.fmt,amt:unitPrice(book(l.id),l.fmt)*l.qty}))};
+  state.cart=[];state.pay={};state.step=1;go("done")}
+ if(a==="reg"){state.reg=el.dataset.e||null;rerender(true)}
+ if(a==="mystore"){state.store=el.dataset.s;toast(`${store(el.dataset.s).name} is now your store`);rerender(true)}
+ if(a==="signout"){state.user=null;rerender()}
+ if(a==="demo"){state.user={name:"Sam",email:"sam.taylor@example.com",points:146};toast("Account created");rerender()}
+});
+document.addEventListener("change",e=>{const el=e.target;const a=el.dataset.act;
+ if(a==="sort"){state.sort=el.value;rerender(true)}
+ if(a==="fmt"){state.fmt=el.value;rerender(true)}
+ if(a==="method"){state.method=el.value;rerender(true)}
+ if(a==="store"){state.store=el.value;rerender(true)}
+ if(a==="pm"){state.pay.m=el.value;state.errs=null;rerender(true)}
+});
+document.addEventListener("input",e=>{if(e.target.id==="cc"){const v=e.target.value.replace(/\D/g,"").slice(0,16);e.target.value=v.replace(/(.{4})/g,"$1 ").trim()}
+ if(e.target.id==="ex"){let v=e.target.value.replace(/\D/g,"").slice(0,4);if(v.length>2)v=v.slice(0,2)+"/"+v.slice(2);e.target.value=v}
+ if(["cv","pc","gp"].includes(e.target.id))e.target.value=e.target.value.replace(/\D/g,"").slice(0,e.target.id==="pc"||e.target.id==="gp"?4:3);
+ if(e.target.classList.contains("bad")){e.target.classList.remove("bad");const n=e.target.parentElement.querySelector(".err");if(n)n.remove()}});
+const val=id=>($("#"+id)||{}).value?.trim()||"";
+const isEmail=s=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+function showErrs(E){state.errs=E;rerender(true);const first=document.querySelector(".bad");if(first)first.focus()}
+document.addEventListener("submit",e=>{e.preventDefault();const f=e.target;
+ if(f.id==="searchForm"){const q=val("q");state.filter="all";CUR="shop";try{history.pushState(null,"","#shop")}catch(e){}state.q=q;route();return}
+ if(f.id==="f1"){const d={fn:val("fn"),ln:val("ln"),em:val("em"),ph:val("ph"),ad:val("ad"),su:val("su"),pc:val("pc")};state.details=d;const E={};
+  if(!d.fn)E.fn="Enter your first name";if(!d.ln)E.ln="Enter your last name";
+  if(!d.em)E.em="Enter your email address";else if(!isEmail(d.em))E.em="Enter an email like name@example.com";
+  if(!/^04\d{8}$/.test(d.ph.replace(/\s/g,"")))E.ph="Enter a 10-digit mobile number starting with 04";
+  if($("#ad")){if(!d.ad)E.ad="Enter your street address";if(!d.su)E.su="Enter your suburb";if(!/^\d{4}$/.test(d.pc))E.pc="Postcode must be 4 digits";else if(+d.pc<800||+d.pc>9999)E.pc="Enter an Australian postcode"}
+  if(Object.keys(E).length)return showErrs(E);state.step=2;state.errs=null;rerender();return}
+ if(f.id==="f2"){const m=state.pay.m||"card";const E={};
+  if(m==="card"){const p={m,cn:val("cn"),cc:val("cc"),ex:val("ex"),cv:val("cv")};state.pay=p;
+   if(!p.cn)E.cn="Enter the name shown on the card";
+   if(p.cc.replace(/\s/g,"").length!==16)E.cc="Card number must be 16 digits";
+   const mm=+p.ex.slice(0,2),yy=+p.ex.slice(3,5);if(!/^\d{2}\/\d{2}$/.test(p.ex)||mm<1||mm>12)E.ex="Enter the expiry as MM/YY";else{const now=new Date(),cy=now.getFullYear()%100,cm=now.getMonth()+1;if(yy<cy||(yy===cy&&mm<cm))E.ex="This card has expired"}
+   if(!/^\d{3}$/.test(p.cv))E.cv="Security code must be 3 digits"}
+  if(m==="gift"){const p={m,gc:val("gc"),gp:val("gp")};state.pay=p;if(p.gc.replace(/\D/g,"").length!==16)E.gc="Gift card number must be 16 digits";if(!/^\d{4}$/.test(p.gp))E.gp="PIN must be 4 digits"}
+  if(Object.keys(E).length)return showErrs(E);state.step=3;state.errs=null;rerender();return}
+ if(f.id==="rf"){const E={};const n=val("rn"),em=val("re");if(!n)E.rn="Enter your name";if(!isEmail(em))E.re="Enter a valid email address";
+  if(Object.keys(E).length)return showErrs(E);state.regDone[f.dataset.e]=$("#rs").value;state.reg=null;state.errs=null;rerender(true);return}
+ if(f.id==="sf"){const E={};const em=val("se"),pw=val("sp");if(!isEmail(em))E.se="Enter the email address you signed up with";if(pw.length<6)E.sp="Password must be at least 6 characters";
+  if(Object.keys(E).length)return showErrs(E);state.user={name:em.split("@")[0].replace(/[._]/g," ").replace(/\b\w/g,c=>c.toUpperCase()),email:em,points:146};state.errs=null;rerender();return}
+ if(f.id==="pf"){const E={};if(!val("pn"))E.pn="Enter your name";if(!isEmail(val("pe")))E.pe="Enter a valid email address";
+  if(Object.keys(E).length)return showErrs(E);state.pubSent=true;state.errs=null;rerender(true);return}
+});
+state.cart.push({id:"silent-harbour",fmt:"paperback",qty:1},{id:"salt-ember",fmt:"paperback",qty:1});
+route();
+</script>
+
+</body>
+</html>
